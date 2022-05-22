@@ -73,33 +73,37 @@ int main()
 		
 		while(1){
 		
-		if((r=read(connfd, rbuff, 256))<0){
-		
-			printf("\nSERVER ERROR: Cannot receive message from client.\n");
-}
-
-	else
-	{
-		printf("\nCLIENT: %s\n",rbuff);
-		printf("\nSERVER: \n");
-		scanf("%s", sbuff);
-		
-		if((w=write(connfd,sbuff,256))<0)
-			printf("\nSERVER ERROR: Cannot send message to the client.\n");
+			if((r=read(connfd, rbuff, 256))<0){
 			
-if(strcmp(sbuff,"Bye.")==0){
-	printf("\nSERVER : Connection with client %s terminated\n", inet_ntoa(cli_addr.sin_addr));
-	
-	close(connfd);
-	break;	
-	
-	}					
+				printf("\nSERVER ERROR: Cannot receive message from client.\n");
+			}
 
-	
-}
-}
+			else
+			{
 
-}		
+				printf("\nCLIENT: %s\n",rbuff);
+				printf("\nSERVER: \n");
+				fgets(sbuff, 256, stdin);
+				
+				if((w=write(connfd, sbuff, 512))<0)
+				{
+					printf("Cannot echo back\n");
+					close(connfd);
+					exit(1);
+				} else {
+					printf("Message sent to client %s :: %s\n", inet_ntoa(cli_addr.sin_addr), sbuff);
+					
+				}
+				if(strncmp(rbuff,"Bye.",4)==0 && strncmp(sbuff,"Bye.",4)==0){
+					printf("\nSERVER : Connection with client %s terminated\n", inet_ntoa(cli_addr.sin_addr));	
+					close(connfd);
+					break;	
+				}	
+														
+			}
+		}
+
+	}		
 
 }
 							
