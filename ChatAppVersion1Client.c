@@ -51,32 +51,35 @@ int main()
 
 	while(1)
 	{
+		fflush(stdin);
 		printf("\nCLIENT: \n");
-		scanf("%s",sbuff);
+		fgets(sbuff, 256, stdin);
 		
-		if(strcmp(sbuff, "Bye.")==0)
-		{
-			printf("\n [!!] CLIENT: Stopping.\n");
-			break;
-		}
 		
 		if((w=write(skfd,sbuff,256))<0)
 		{
-		
 			printf("\n CLIENT ERROR: Cannot send message to echo server.\n");
 			close(skfd);
 			exit(1);
 		}
+		if((r=read(skfd, rbuff, 256))<0)
+		{
+			printf("\n CANNOT READ");
+			exit(1);
+		}
+		else
+		{
+			rbuff[r] = '\0';
+			printf("SERVER: %s\n",rbuff);
+			if(strncmp(rbuff,"Bye.",4)==0)
+			{
+				printf("\n [!!] CLIENT: Stopping.\n");
+				break;
+			}	
+		}
+
 		
-		if((r=read(skfd,rbuff,256))<0)
-			printf("\n CLIENT ERROR: Cannot receive message from the echo server");
-			
-	else
-	{
-		rbuff[r]='\0';
-		printf("\nSERVER: %s\n",rbuff);
-	}
-	
+		
 	}					
 	close(skfd);
 	exit(1);
